@@ -1,17 +1,10 @@
-"use client"
 import React from 'react'
-import { useSession, signIn, signOut } from "next-auth/react"
-import { useRouter } from 'next/navigation'
+import Dashbord from '@/components/Dashbord'
 
-const Dashbord = () => {
-  const { data: session } = useSession()
-  if (!session) {
-    const router = useRouter()
-    router.push('/login')
-  }
+const dashbord = () => {
   return (
     <div>
-      dashbord
+      <Dashbord/>
     </div>
   )
 }
