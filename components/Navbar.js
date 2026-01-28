@@ -37,7 +37,7 @@ const Navbar = () => {
                 <Link href="/dashbord" className="inline-flex items-center w-full p-2 hover:bg-gray-600 rounded">Dashboard</Link>
               </li>
               <li>
-                <Link href="#" className="inline-flex items-center w-full p-2 hover:bg-gray-600 rounded">Your page</Link>
+                <Link href={session.user.name} className="inline-flex items-center w-full p-2 hover:bg-gray-600 rounded">Your page</Link>
               </li>
               <li>
                 <Link onClick={()=> signOut()} href="#" className="inline-flex items-center w-full p-2 hover:bg-gray-600 rounded">Sign out</Link>
