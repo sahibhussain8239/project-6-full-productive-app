@@ -1,25 +1,33 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Script from 'next/script'
-import { initiate } from '@/actions/useractions'
+import { fetchpayments, initiate, fetchuser } from '@/actions/useractions'
 import { useSession } from 'next-auth/react'
 
 const PaymentPage = ({ username }) => {
     // const { data: session } = useSession()
     const [currentuser, setCurrentuser] = useState({})
+    const [payments, setPayments] = useState([])
     const [paymentform, setPaymentform] = useState({
         name: "",
         message: "",
         amount: ""
     })
 
+    useEffect(() => {
+        getData()
+    }, [])
+
     const handleChange = (e) => {
         setPaymentform({ ...paymentform, [e.target.name]: e.target.value })
     }
 
     const getData = async (params) => {
-        let u = fetchuser(username)
+        let u = await fetchuser(username)
         setCurrentuser(u)
+        let dbpayments = await fetchpayments(username)
+        setPayments(dbpayments)
+        console.log(u, dbpayments)
     }
 
     const pay = async (amount) => {
@@ -73,30 +81,14 @@ const PaymentPage = ({ username }) => {
                     <div className="supporter w-1/2 rounded-lg text-white bg-slate-900 p-10">
                         <h2 className='text-2xl my-5 font-bold'>Supporters</h2>
                         <ul className='mx-5'>
-                            <li className='my-4 flex gap-2 items-center text-sm'>
+                            {payments.map((p, i) => {
+                            return <li key={p.oid} className='my-4 flex gap-2 items-center text-sm'>
                                 <img className='rounded-full ' width={25} src="/icons8-profile.gif" alt="user avatar" />
                                 <span>
-                                    Shubham donated <span className='font-bold'>$50</span> with a massage <span>"I support you bro, Lots of ❤️"</span>
+                                    {p.name} donated <span className='font-bold'>{Number.parseInt(p.amount)/100}</span> with a massage <span>"{p.message}"</span>
                                 </span>
                             </li>
-                            <li className='my-4 flex gap-2 items-center text-sm'>
-                                <img className='rounded-full ' width={25} src="/icons8-profile.gif" alt="user avatar" />
-                                <span>
-                                    Shubham donated <span className='font-bold'>$50</span> with a massage <span>"I support you bro, Lots of ❤️"</span>
-                                </span>
-                            </li>
-                            <li className='my-4 flex gap-2 items-center text-sm'>
-                                <img className='rounded-full ' width={25} src="/icons8-profile.gif" alt="user avatar" />
-                                <span>
-                                    Shubham donated <span className='font-bold'>$50</span> with a massage <span>"I support you bro, Lots of ❤️"</span>
-                                </span>
-                            </li>
-                            <li className='my-4 flex gap-2 items-center text-sm'>
-                                <img className='rounded-full ' width={25} src="/icons8-profile.gif" alt="user avatar" />
-                                <span>
-                                    Shubham donated <span className='font-bold'>$50</span> with a massage <span>"I support you bro, Lots of ❤️"</span>
-                                </span>
-                            </li>
+                            })}
                         </ul>
                     </div>
 
@@ -106,7 +98,7 @@ const PaymentPage = ({ username }) => {
                             <input onChange={handleChange} value={paymentform.name} name='name' type="text" className='w-full p-3  rounded-lg bg-slate-800' placeholder='Enter Name' />
                             <input onChange={handleChange} value={paymentform.message} name='message' type="text" className='w-full p-3  rounded-lg bg-slate-800' placeholder='Enter Messsage' />
                             <input onChange={handleChange} value={paymentform.amount} name='amount' type="text" className='w-full p-3  rounded-lg bg-slate-800' placeholder='Enter Amount' />
-                            <button type="button" className="text-white bg-linear-to-br from-purple-600 to-blue-500 hover:bg-linear-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium border border-none rounded-lg text-sm px-4 py-2 text-center leading-5">Pay</button>
+                            <button onClick={() => pay(Number.parseInt(paymentform.amount)*100)} type="button" className="text-white bg-linear-to-br from-purple-600 to-blue-500 hover:bg-linear-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium border border-none rounded-lg text-sm px-4 py-2 text-center leading-5">Pay</button>
                         </div>
                         {/* Or choose from this amount */}
                         <div className='flex gap-2 mt-5'>

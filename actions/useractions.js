@@ -8,15 +8,7 @@ export const initiate = async (amount, to_user, paymentform) => {
     await connectDB()
     var instance = new Razorpay({ key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, key_secret: process.env.KEY_SECRET })
 
-    // instance.orders.create({
-    //     amount: 50000,
-    //     currency: "INR",
-    //     receipt: "receipt#1",
-    //     notes: {
-    //         key1: "value3",
-    //         key2: "value2"
-    //     }
-    // })
+    
 
     let options = {
         amount: Number.parseInt(amount),
@@ -36,3 +28,18 @@ export const initiate = async (amount, to_user, paymentform) => {
 
     return x
 }
+
+export const fetchuser = async (username) => {
+    await connectDB()
+    let u = await User.findOne({username: username})
+    let user = u.toObject({flattenobjectIds: true})
+    return user
+}
+
+export const fetchpayments = async (username) => {
+    await connectDB()
+    // Find all payments sorted by decresing order of amount and flatten objects ids
+    let p = await Payment.find({to_user: username}).sort({amount: -1}).lean()
+    return p
+}
+
